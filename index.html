@@ -327,7 +327,6 @@ campaigns: [
 ]
     
     // 👉 Add your next digital marketing project here
-  ]
 };
 /* ============================================================
    ENGINE — no need to edit below this line
@@ -490,7 +489,23 @@ function renderCampaignDetail(campaignId){
     <span class="detail-meta">${c.summary}</span>
     <div class="detail-block"><h4>Approach</h4><div class="detail-body">${c.approach}</div></div>
     <div class="detail-block"><h4>Results</h4><div class="detail-body">${c.results}</div></div>
-    <div class="detail-tags">${c.tags.map(t=>`<span>${t}</span>`).join('')}</div>
+   ${c.embedUrl ? `
+<div class="detail-block">
+  <h4>Miro Board</h4>
+  <iframe
+    src="${c.embedUrl}"
+    width="100%"
+    height="700"
+    frameborder="0"
+    scrolling="no"
+    allowfullscreen
+  ></iframe>
+</div>
+` : ''}
+
+<div class="detail-tags">
+  ${c.tags.map(t=>`<span>${t}</span>`).join('')}
+</div>
   `;
 }
 
