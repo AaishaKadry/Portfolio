@@ -103,6 +103,10 @@
   /* ---------- POST PREVIEW GRID (signature element) ---------- */
   .post-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:24px; }
   .post-card{ background:#fff; border:1px solid var(--line); display:flex; flex-direction:column; }
+
+  .post-media.video{
+    aspect-ratio:9/16;
+}
   .post-media{
     position:relative; aspect-ratio:1/1; overflow:hidden; background:#eee;
     user-select:none;
@@ -434,7 +438,7 @@ function postCardHTML(platformId, post){
   if(post.video){
     return `
       <div class="post-card">
-        <div class="post-media">
+     <div class="post-media ${post.video ? 'video' : ''}">
           <video
             src="${post.video}"
             poster="${post.thumbnail || ''}"
