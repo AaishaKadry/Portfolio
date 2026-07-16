@@ -429,28 +429,86 @@ function renderPlatforms(){
 }
 
 function postCardHTML(platformId, post){
+
+  // VIDEO POST
+  if(post.video){
+    return `
+      <div class="post-card">
+        <div class="post-media">
+          <video
+            src="${post.video}"
+            poster="${post.thumbnail || ''}"
+            autoplay
+            muted
+            loop
+            playsinline
+            controls
+            style="width:100%;height:100%;object-fit:cover;">
+          </video>
+        </div>
+
+        <div class="post-info"
+             data-open-post="${post.id}"
+             data-open-platform="${platformId}">
+          <div class="ptitle">${post.title}</div>
+          <div class="pexcerpt">${post.excerpt}</div>
+
+          <div class="post-tags">
+            ${post.tags.map(t=>`<span>${t}</span>`).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // IMAGE POST
   const idx = cardIndex[post.id] || 0;
-  const dots = post.images.map((_,i)=>`<span class="dot ${i===idx?'active':''}"></span>`).join('');
+  const dots = post.images.map((_,i)=>`<span class="dot ${i===idx?'active':''}</span>`).join('');
+
   return `
     <div class="post-card">
-      <div class="post-media" data-post-id="${post.id}" data-platform-id="${platformId}">
-        <img src="${post.images[idx]}" data-idx="${idx}" alt="${post.title}">
+
+      <div class="post-media"
+           data-post-id="${post.id}"
+           data-platform-id="${platformId}">
+
+        <img src="${post.images[idx]}">
+
         ${post.images.length>1?`
-          <button class="arrow prev" data-dir="-1" aria-label="Previous image">&#8249;</button>
-          <button class="arrow next" data-dir="1" aria-label="Next image">&#8250;</button>
+
+          <button class="arrow prev"
+                  data-dir="-1">&#8249;</button>
+
+          <button class="arrow next"
+                  data-dir="1">&#8250;</button>
+
           <div class="dots">${dots}</div>
-          <div class="swipe-hint">${idx+1}/${post.images.length}</div>
+
+          <div class="swipe-hint">
+            ${idx+1}/${post.images.length}
+          </div>
+
         `:''}
+
       </div>
-      <div class="post-info" data-open-post="${post.id}" data-open-platform="${platformId}">
+
+      <div class="post-info"
+           data-open-post="${post.id}"
+           data-open-platform="${platformId}">
+
         <div class="ptitle">${post.title}</div>
+
         <div class="pexcerpt">${post.excerpt}</div>
-        <div class="post-tags">${post.tags.map(t=>`<span>${t}</span>`).join('')}</div>
+
+        <div class="post-tags">
+          ${post.tags.map(t=>`<span>${t}</span>`).join('')}
+        </div>
+
       </div>
+
     </div>
   `;
 }
-
 function renderPlatformGrid(platformId){
   const platform = findPlatform(platformId);
   const body = platform.posts.length ? `
@@ -582,25 +640,78 @@ function closeModal(){
   modalState = null;
 }
 function renderModal(){
+
   if(!modalState) return;
-  const { post, idx } = modalState;
-  const dots = post.images.map((_,i)=>`<span class="dot ${i===idx?'active':''}"></span>`).join('');
-  document.getElementById('modalCard').innerHTML = `
-    <div class="modal-media" id="modalMedia">
-      <img src="${post.images[idx]}" alt="${post.title}">
+
+  const {post,idx}=modalState;
+
+  let media="";
+
+  if(post.video){
+
+    media=`
+      <video
+        src="${post.video}"
+        controls
+        autoplay
+        muted
+        loop
+        playsinline
+        style="width:100%;height:100%;object-fit:contain;background:#000;">
+      </video>
+    `;
+
+  }else{
+
+    const dots=post.images.map((_,i)=>`
+      <span class="dot ${i===idx?'active':''}"></span>
+    `).join('');
+
+    media=`
+
+      <img src="${post.images[idx]}">
+
       ${post.images.length>1?`
-        <button class="modal-arrow prev" data-mdir="-1" aria-label="Previous image">&#8249;</button>
-        <button class="modal-arrow next" data-mdir="1" aria-label="Next image">&#8250;</button>
-        <div class="modal-dots">${dots}</div>
+
+      <button class="modal-arrow prev"
+              data-mdir="-1">&#8249;</button>
+
+      <button class="modal-arrow next"
+              data-mdir="1">&#8250;</button>
+
+      <div class="modal-dots">${dots}</div>
+
       `:''}
+
+    `;
+
+  }
+
+  document.getElementById("modalCard").innerHTML=`
+
+    <div class="modal-media">
+      ${media}
     </div>
+
     <div class="modal-body">
-      <button class="modal-close" id="modalCloseBtn" aria-label="Close">&times;</button>
-      <div class="modal-platform">${findPlatformNameForPost(post)}</div>
+
+      <button class="modal-close"
+              id="modalCloseBtn">&times;</button>
+
+      <div class="modal-platform">
+        ${findPlatformNameForPost(post)}
+      </div>
+
       <h3>${post.title}</h3>
+
       <p class="caption">${post.caption}</p>
-      <div class="detail-tags">${post.tags.map(t=>`<span>${t}</span>`).join('')}</div>
+
+      <div class="detail-tags">
+        ${post.tags.map(t=>`<span>${t}</span>`).join('')}
+      </div>
+
       <div class="modal-date">${post.date}</div>
+
     </div>
   `;
 }
@@ -648,6 +759,7 @@ document.getElementById('screenRoot').addEventListener('click', (e)=>{
 
 function cyclePostImage(platformId, postId, dir){
   const post = findPost(platformId, postId);
+  if(post.video) return;
   const len = post.images.length;
   let idx = (cardIndex[postId] || 0) + dir;
   idx = ((idx % len) + len) % len;
