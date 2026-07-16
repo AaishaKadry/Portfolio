@@ -111,6 +111,22 @@
     position:relative; aspect-ratio:1/1; overflow:hidden; background:#eee;
     user-select:none;
   }
+.poster-card{
+    aspect-ratio:9/16;
+}
+
+.wallpaper-card{
+    aspect-ratio:16/9;
+}
+
+.poster-card img,
+.wallpaper-card img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+  
   .post-media img{ width:100%; height:100%; object-fit:cover; }
   .post-media .arrow{
     position:absolute; top:50%; transform:translateY(-50%);
@@ -325,6 +341,7 @@ const DATA = {
 {
   id: 'berry-matcha',
   title: 'Berry Matcha Poster',
+    type: 'poster',
   excerpt: 'Social media poster created for a premium matcha beverage campaign.',
   images: [
     'assets/pinterest/berry-matcha.png'
@@ -341,6 +358,7 @@ const DATA = {
       {
   id: 'kiwi-matcha',
   title: 'Kiwi Matcha Poster',
+          type: 'poster',
   excerpt: 'Premium café poster highlighting Kiwi Matcha.',
   images: [
     'assets/pinterest/kiwi-matcha.png'
@@ -358,6 +376,7 @@ const DATA = {
       {
   id: 'mango-matcha',
   title: 'Mango Matcha Poster',
+          type: 'poster',
   excerpt: 'Minimal poster promoting a mango matcha beverage.',
   images: [
     'assets/pinterest/mango-matcha.png'
@@ -375,6 +394,8 @@ const DATA = {
       {
   id: 'chocolate-croissant',
   title: 'Chocolate Croissant Poster',
+
+          type: 'poster',
   excerpt: 'Premium promotional poster created for a bakery social media campaign.',
   images: [
     'assets/pinterest/chocolate-croissant.png'
@@ -392,6 +413,7 @@ const DATA = {
       {
   id: 'pistachio-croissant',
   title: 'Pistachio Croissant Poster',
+          type: 'poster',
   excerpt: 'Elegant bakery poster promoting a pistachio croissant.',
   images: [
     'assets/pinterest/pistachio-croissant.png'
@@ -409,6 +431,7 @@ const DATA = {
       {
   id: 'classic-croissant',
   title: 'Classic Butter Croissant Poster',
+          type: 'poster',
   excerpt: 'Minimal promotional design featuring a classic butter croissant.',
   images: [
     'assets/pinterest/classic-croissant.png'
@@ -582,10 +605,10 @@ function postCardHTML(platformId, post){
 
   return `
     <div class="post-card">
-
-      <div class="post-media"
-           data-post-id="${post.id}"
-           data-platform-id="${platformId}">
+<div
+  class="post-media ${post.type === 'wallpaper' ? 'wallpaper-card' : 'poster-card'}"
+  data-post-id="${post.id}"
+  data-platform-id="${platformId}">
 
         <img src="${post.images[idx]}">
 
