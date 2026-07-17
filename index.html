@@ -107,10 +107,17 @@
   .post-media.video{
     aspect-ratio:9/16;
 }
-  .post-media{
-    position:relative; aspect-ratio:1/1; overflow:hidden; background:#eee;
+ .post-media{
+    position:relative;
+    width:100%;
+    height:520px;          /* same height for every card */
+    overflow:hidden;
+    background:#f5f5f5;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     user-select:none;
-  }
+}
 .poster-card{
     aspect-ratio:9/16;
 }
@@ -127,7 +134,12 @@
 }
 
   
-  .post-media img{ width:100%; height:100%; object-fit:cover; }
+.post-media img{
+    width:100%;
+    height:100%;
+    object-fit:contain;     /* shows the full image */
+    object-position:center;
+}
   .post-media .arrow{
     position:absolute; top:50%; transform:translateY(-50%);
     width:32px; height:32px; border-radius:50%; border:none;
