@@ -104,40 +104,39 @@
   .post-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:24px; }
   .post-card{ background:#fff; border:1px solid var(--line); display:flex; flex-direction:column; }
 
-  .post-media.video{
-    aspect-ratio:9/16;
-}
- .post-media{
+.post-media{
     position:relative;
     width:100%;
-    height:520px;          /* same height for every card */
     overflow:hidden;
     background:#f5f5f5;
+
     display:flex;
-    align-items:center;
     justify-content:center;
-    user-select:none;
-}
-.poster-card{
-    aspect-ratio:9/16;
+    align-items:center;
 }
 
-.wallpaper-card{
+/* Automatically assigned */
+.post-media.ratio-4-5{
+    aspect-ratio:4/5;
+}
+
+.post-media.ratio-2-3{
+    aspect-ratio:2/3;
+}
+
+.post-media.ratio-16-9{
     aspect-ratio:16/9;
 }
 
-.poster-card img,
-.wallpaper-card img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
+.post-media.ratio-9-16{
+    aspect-ratio:9/16;
 }
 
-  
-.post-media img{
+.post-media img,
+.post-media video{
     width:100%;
     height:100%;
-    object-fit:cover;     /* shows the full image */
+    object-fit:contain;
     object-position:center;
 }
   .post-media .arrow{
@@ -533,7 +532,72 @@ function placeholderBlock(size){
 }
 
 /* ---------- RENDERERS ---------- */
+function detectAspectRatios(){
 
+    document.querySelectorAll(".post-media img.auto-ratio").forEach(img=>{
+
+        if(img.dataset.checked) return;
+
+        img.dataset.checked = "1";
+
+        function applyRatio(){
+
+            const w = img.naturalWidth;
+            const h = img.naturalHeight;
+
+            if(!w || !h) return;
+
+            const ratio = w / h;
+            const card = img.closest(".post-media");
+
+            card.classList.remove(
+                "ratio-4-5",
+                "ratio-2-3",
+                "ratio-16-9",
+                "ratio-9-16"
+            );
+
+            if(Math.abs(ratio - (4/5)) < 0.05){
+
+                card.classList.add("ratio-4-5");
+
+            }else if(Math.abs(ratio - (2/3)) < 0.05){
+
+                card.classList.add("ratio-2-3");
+
+            }else if(Math.abs(ratio - (16/9)) < 0.05){
+
+                card.classList.add("ratio-16-9");
+
+            }else if(Math.abs(ratio - (9/16)) < 0.05){
+
+                card.classList.add("ratio-9-16");
+
+            }else{
+
+                /* fallback */
+                card.classList.add("ratio-4-5");
+
+            }
+
+        }
+
+        if(img.complete){
+
+            applyRatio();
+
+        }else{
+
+            img.onload = applyRatio;
+
+        }
+
+    });
+
+}
+
+
+  
 function renderHome(){
   return `
     <div class="home-hero">
@@ -622,7 +686,10 @@ function postCardHTML(platformId, post){
   data-post-id="${post.id}"
   data-platform-id="${platformId}">
 
-        <img src="${post.images[idx]}">
+<img
+    src="${post.images[idx]}"
+    class="auto-ratio"
+    loading="lazy">
 
         ${post.images.length>1?`
 
@@ -775,6 +842,7 @@ function render(){
     case 'campaignDetail': html = renderCampaignDetail(s.campaignId); crumb.textContent='Digital Marketing'; break;
   }
   root.innerHTML = html;
+  detectAspectRatios();
 }
 
 /* ---------- MODAL ---------- */
