@@ -103,42 +103,46 @@
   /* ---------- POST PREVIEW GRID (signature element) ---------- */
   .post-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:24px; }
   .post-card{ background:#fff; border:1px solid var(--line); display:flex; flex-direction:column; }
-
-  .post-media.video{
-    aspect-ratio:9/16;
-}
- .post-media{
+  
+.post-media{
     position:relative;
     width:100%;
-    height:520px;          /* same height for every card */
     overflow:hidden;
     background:#f5f5f5;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    user-select:none;
 }
+
+/* Instagram reels */
+.video-card{
+    aspect-ratio:9/16;
+}
+
+.video-card video{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    background:#000;
+}
+
+/* Posters */
 .poster-card{
     aspect-ratio:9/16;
 }
 
+.poster-card img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+}
+
+/* Wallpapers */
 .wallpaper-card{
     aspect-ratio:16/9;
 }
 
-.poster-card img,
 .wallpaper-card img{
     width:100%;
     height:100%;
     object-fit:cover;
-}
-
-  
-.post-media img{
-    width:100%;
-    height:100%;
-    object-fit:contain;     /* shows the full image */
-    object-position:center;
 }
   .post-media .arrow{
     position:absolute; top:50%; transform:translateY(-50%);
@@ -580,11 +584,21 @@ function renderPlatforms(){
 
 function postCardHTML(platformId, post){
 
-  // VIDEO POST
+  // Decide which layout to use
+  let mediaClass = "poster-card";
+
+  if(post.video){
+    mediaClass = "video-card";
+  }else if(post.type === "wallpaper"){
+    mediaClass = "wallpaper-card";
+  }
+
+  // ---------------- VIDEO ----------------
   if(post.video){
     return `
       <div class="post-card">
-     <div class="post-media ${post.video ? 'video' : ''}">
+
+        <div class="post-media ${mediaClass}">
           <video
             src="${post.video}"
             poster="${post.thumbnail || ''}"
@@ -592,53 +606,54 @@ function postCardHTML(platformId, post){
             muted
             loop
             playsinline
-            controls
-            style="width:100%;height:100%;object-fit:cover;">
+            controls>
           </video>
         </div>
 
         <div class="post-info"
              data-open-post="${post.id}"
              data-open-platform="${platformId}">
+
           <div class="ptitle">${post.title}</div>
           <div class="pexcerpt">${post.excerpt}</div>
 
           <div class="post-tags">
             ${post.tags.map(t=>`<span>${t}</span>`).join('')}
           </div>
+
         </div>
+
       </div>
     `;
   }
 
-  // IMAGE POST
+  // ---------------- IMAGE ----------------
   const idx = cardIndex[post.id] || 0;
-  const dots = post.images.map((_,i)=>`<span class="dot ${i===idx?'active':''}</span>`).join('');
+
+  const dots = post.images.map((_,i)=>
+      `<span class="dot ${i===idx?'active':''}"></span>`
+  ).join('');
 
   return `
     <div class="post-card">
-<div
-  class="post-media ${post.type === 'wallpaper' ? 'wallpaper-card' : 'poster-card'}"
-  data-post-id="${post.id}"
-  data-platform-id="${platformId}">
 
-        <img src="${post.images[idx]}">
+      <div
+        class="post-media ${mediaClass}"
+        data-post-id="${post.id}"
+        data-platform-id="${platformId}">
 
-        ${post.images.length>1?`
+        <img src="${post.images[idx]}" alt="${post.title}">
 
-          <button class="arrow prev"
-                  data-dir="-1">&#8249;</button>
-
-          <button class="arrow next"
-                  data-dir="1">&#8250;</button>
+        ${post.images.length>1 ? `
+          <button class="arrow prev" data-dir="-1">&#8249;</button>
+          <button class="arrow next" data-dir="1">&#8250;</button>
 
           <div class="dots">${dots}</div>
 
           <div class="swipe-hint">
             ${idx+1}/${post.images.length}
           </div>
-
-        `:''}
+        ` : ""}
 
       </div>
 
@@ -659,6 +674,8 @@ function postCardHTML(platformId, post){
     </div>
   `;
 }
+
+  
 function renderPlatformGrid(platformId){
   const platform = findPlatform(platformId);
   const body = platform.posts.length ? `
