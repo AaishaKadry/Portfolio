@@ -1022,7 +1022,7 @@ function render(){
   let html = '';
   switch(s.screen){
     case 'home': html = renderHome(); crumb.textContent=''; break;
-    
+    case 'platforms': html = renderPlatforms(); crumb.textContent='Social Media Marketing'; break;
     case 'blogs': html = renderBlogs(); crumb.textContent='Content Writing'; break;
     case 'blogDetail': html = renderBlogDetail(s.blogId); crumb.textContent='Content Writing'; break;
     case 'campaigns': html = renderCampaigns(); crumb.textContent='Digital Marketing'; break;
