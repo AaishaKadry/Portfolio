@@ -775,8 +775,8 @@ function detectAspectRatios(){
 function renderHome(){
   return `
     <div class="home-hero">
-      <div class="eyebrow mono">Matcha & More</div>
-      <h1>A living portfolio of content, writing, and marketing work.</h1>
+     
+      <h1>Hi, I'm Aaisha.I enjoy bringing ideas to life through content that informs, engages, and inspires. From animated reels and social media creatives to marketing strategies and written content, I combine creativity with a strategic mindset to build work that's visually compelling and purpose-driven. This portfolio is a growing collection of projects that reflect my passion for design, storytelling, and digital marketing.</h1>
       <p>New work gets added here as it's made — explore by category.</p>
     </div>
     <div class="category-grid">
@@ -1040,6 +1040,12 @@ function openModal(platformId, postId){
   modalState = { post, idx: cardIndex[post.id] || 0 };
   renderModal();
   document.getElementById('modalOverlay').classList.add('open');
+}
+  function findBlog(id){ return DATA.blogs.find(b=>b.id===id); }
+function findCampaign(id){ return DATA.campaigns.find(c=>c.id===id); }
+function findPost(platformId, postId){
+  const platform = DATA.socialPlatforms.find(p => p.id === platformId);
+  return platform.posts.find(post => post.id === postId);
 }
 function closeModal(){
   document.getElementById('modalOverlay').classList.remove('open');
