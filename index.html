@@ -21,7 +21,7 @@
   *{box-sizing:border-box; margin:0; padding:0;}
   html,body{height:100%;}
 body{
-    background-image: url("assets/background.jpg");
+    background-image: url("assets/background (1).jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -319,11 +319,12 @@ const DATA = {
           title: 'Why Your Shopify Store Is Slow (and How to Fix It)',
           excerpt: '5-slide carousel on the top causes of slow Shopify load times.',
           images: [
+            'assets/instagram/shopify-speed/5.png',
             'assets/instagram/shopify-speed/1.png',
             'assets/instagram/shopify-speed/2.png',
             'assets/instagram/shopify-speed/3.png',
-            'assets/instagram/shopify-speed/4.png',
-            'assets/instagram/shopify-speed/5.png'
+            'assets/instagram/shopify-speed/4.png'
+            
           ],
           caption: "Slow stores don't just annoy customers — they lose them. Most of these fixes take under a day. Swipe to see the 3 biggest speed killers on Shopify stores right now.",
           tags: ['#ShopifyDevelopment', '#EcommerceSpeed', '#ShopifyTips'],
@@ -883,7 +884,7 @@ function postCardHTML(platformId, post){
 
   // IMAGE POST
   const idx = cardIndex[post.id] || 0;
-  const dots = post.images.map((_,i)=>`<span class="dot ${i===idx?'active':''}</span>`).join('');
+  const dots = post.images.map((_,i)=>`<span class="dot ${i===idx?'active':''}"></span>`).join('');
 
   return `
     <div class="post-card">
