@@ -20,11 +20,25 @@
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html,body{height:100%;}
-  body{
-    background:var(--paper); color:var(--ink);
-    font-family:'Lora', serif; line-height:1.6;
-    -webkit-tap-highlight-color: transparent;
-  }
+body{
+    background:
+        url("assets/blob1.png") top left no-repeat,
+        url("assets/blob2.png") top right no-repeat,
+        url("assets/blob3.png") bottom left no-repeat,
+        url("assets/blob4.png") bottom right no-repeat,
+        var(--paper);
+
+    background-size:
+        260px,
+        180px,
+        140px,
+        320px,
+        auto;
+
+    color:var(--ink);
+    font-family:'Lora', serif;
+    line-height:1.6;
+}
   h1,h2,h3,.display{ font-family:'Space Grotesk', sans-serif; letter-spacing:-0.01em; }
   .mono{ font-family:'IBM Plex Mono', monospace; letter-spacing:0.03em; text-transform:uppercase; font-size:0.72rem; }
   button{ font-family:inherit; cursor:pointer; }
