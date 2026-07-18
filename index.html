@@ -258,7 +258,44 @@ body{
   .modal-body h3{ font-size:1.3rem; color:var(--navy); margin-bottom:12px; }
   .modal-body p.caption{ font-size:0.96rem; color:var(--ink); margin-bottom:16px; }
   .modal-date{ font-family:'IBM Plex Mono',monospace; font-size:0.7rem; color:var(--muted); margin-top:auto; padding-top:16px; }
+/* ---------- MOTION: entrance + hover ---------- */
+@keyframes fadeSlideUp{
+  from{ opacity:0; transform:translateY(14px); }
+  to{ opacity:1; transform:translateY(0); }
+}
+.home-hero .eyebrow{ animation:fadeSlideUp .5s ease both; }
+.home-hero h1{ animation:fadeSlideUp .55s ease .08s both; }
+.home-hero p{ animation:fadeSlideUp .55s ease .16s both; }
 
+.category-grid .cat-card{ animation:fadeSlideUp .5s ease both; }
+.category-grid .cat-card:nth-child(1){ animation-delay:.22s; }
+.category-grid .cat-card:nth-child(2){ animation-delay:.30s; }
+.category-grid .cat-card:nth-child(3){ animation-delay:.38s; }
+
+.cat-card:hover{ transform:translateY(-5px); box-shadow:0 14px 28px rgba(22,36,71,0.10); }
+.cat-card .go{ display:inline-flex; align-items:center; gap:4px; transition:gap .15s ease, color .15s ease; }
+.cat-card:hover .go{ gap:8px; color:var(--coral); }
+
+.reveal{ opacity:0; transform:translateY(16px); transition:opacity .5s ease, transform .5s ease; }
+.reveal.visible{ opacity:1; transform:translateY(0); }
+
+.deco{ position:fixed; z-index:-1; pointer-events:none; user-select:none; }
+.deco-bow{ top:0px; left:10px; width:130px; transform-origin:top center; animation:swayBow 5s ease-in-out infinite; }
+.deco-star{ top:50px; right:30px; width:110px; animation:floatStar 6s ease-in-out infinite; }
+@keyframes swayBow{
+  0%,100%{ transform:rotate(-4deg); }
+  50%{ transform:rotate(4deg); }
+}
+@keyframes floatStar{
+  0%,100%{ transform:translateY(0) rotate(-3deg); }
+  50%{ transform:translateY(-10px) rotate(3deg); }
+}
+@media (prefers-reduced-motion: reduce){
+  .deco, .home-hero .eyebrow, .home-hero h1, .home-hero p, .category-grid .cat-card, .reveal{
+    animation:none !important; transition:none !important; opacity:1 !important; transform:none !important;
+  }
+}
+  
   @media (max-width:860px){
     .category-grid{grid-template-columns:1fr;}
     .platform-grid{grid-template-columns:repeat(2,1fr);}
@@ -272,7 +309,8 @@ body{
 </style>
 </head>
 <body>
-
+<img class="deco deco-bow" src="assets/blob1.png" alt="" aria-hidden="true">
+<img class="deco deco-star" src="assets/blob2.png" alt="" aria-hidden="true">
 <div class="topbar">
   <div class="topbar-inner">
     <button class="back-btn" id="backBtn">&larr; Back</button>
@@ -857,7 +895,7 @@ function postCardHTML(platformId, post){
   // VIDEO POST
   if(post.video){
     return `
-      <div class="post-card">
+      <div class="post-card reveal">
      <div class="post-media ${post.video ? 'video' : ''}">
           <video
             src="${post.video}"
@@ -890,7 +928,7 @@ function postCardHTML(platformId, post){
   const dots = post.images.map((_,i)=>`<span class="dot ${i===idx?'active':''}"></span>`).join('');
 
   return `
-    <div class="post-card">
+<div class="post-card reveal">
 <div
   class="post-media ${post.type === 'wallpaper' ? 'wallpaper-card' : 'poster-card'}"
   data-post-id="${post.id}"
@@ -939,7 +977,7 @@ function postCardHTML(platformId, post){
 
 function renderBlogs(){
   const cards = DATA.blogs.map(b => `
-    <button class="list-card" data-go='{"screen":"blogDetail","blogId":"${b.id}"}'>
+    <button class="list-card reveal" data-go='{"screen":"blogDetail","blogId":"${b.id}"}'>
       ${b.cover ? `<div class="list-cover"><img src="${b.cover}" alt="${b.title}"></div>` : placeholderBlock()}
       <div class="list-body">
         <h3>${b.title}</h3>
@@ -967,7 +1005,7 @@ function renderBlogDetail(blogId){
 
 function renderCampaigns(){
   const cards = DATA.campaigns.map(c => `
-    <button class="list-card" data-go='{"screen":"campaignDetail","campaignId":"${c.id}"}'>
+    <button class="list-card reveal" data-go='{"screen":"campaignDetail","campaignId":"${c.id}"}'>
       ${c.cover ? `<div class="list-cover"><img src="${c.cover}" alt="${c.title}"></div>` : placeholderBlock()}
       <div class="list-body">
         <h3>${c.title}</h3>
@@ -1014,7 +1052,18 @@ const SCREEN_TITLES = {
   blogs:'Content Writing', blogDetail:'Content Writing / Post',
   campaigns:'Digital Marketing', campaignDetail:'Digital Marketing / Project'
 };
+const revealObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, {threshold:0.12});
 
+function observeReveals(){
+  document.querySelectorAll('.reveal:not(.visible)').forEach(el=>revealObserver.observe(el));
+}
 function render(){
   const s = currentScreen();
   const root = document.getElementById('screenRoot');
@@ -1034,6 +1083,8 @@ function render(){
   }
   root.innerHTML = html;
   detectAspectRatios();
+
+  observeReveals();
 }
 
 /* ---------- MODAL ---------- */
